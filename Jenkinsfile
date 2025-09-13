@@ -4,7 +4,7 @@ pipeline {
     // Include Bun in PATH for all stages
     environment {
         JAVA_HOME = "/var/lib/jenkins/.sdkman/candidates/java/24.0.2-amzn"
-        PATH = "/var/lib/jenkins/.bun/bin:${JAVA_HOME}/bin:${env.PATH}"
+        PATH = "${JAVA_HOME}/bin:/var/lib/jenkins/.bun/bin:${env.PATH}"
     }
 
     stages {
@@ -77,8 +77,12 @@ pipeline {
         // -------------------------------
         stage('Backend - Build') {
             steps {
-                dir('backend') {                  // Switch to backend folder
-                    sh './mvnw clean package -DskipTests'  // Build Spring Boot jar
+                dir('backend') { 
+                    sh '''
+                        export JAVA_HOME=$JAVA_HOME
+                        export PATH=$JAVA_HOME/bin:$PATH
+                        ./mvnw clean package -DskipTests
+                    '''
                 }
             }
         }
