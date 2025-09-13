@@ -3,8 +3,7 @@ pipeline {
 
     // Include Bun in PATH for all stages
     environment {
-        JAVA_HOME = "/var/lib/jenkins/.sdkman/candidates/java/24.0.2-amzn"
-        PATH = "${JAVA_HOME}/bin:/var/lib/jenkins/.bun/bin:${env.PATH}"
+        PATH = "/var/lib/jenkins/.bun/bin:$PATH"
     }
 
     stages {
@@ -79,8 +78,6 @@ pipeline {
             steps {
                 dir('backend') { 
                     sh '''
-                        export JAVA_HOME=$JAVA_HOME
-                        export PATH=$JAVA_HOME/bin:$PATH
                         ./mvnw clean package -DskipTests
                     '''
                 }
