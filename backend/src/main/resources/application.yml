@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: FinLoanCalculator
+
+  datasource:
+    url: jdbc:sqlite:./db/finLoanCalculator.db
+    driver-class-name: org.sqlite.JDBC
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    database-platform: org.hibernate.community.dialect.SQLiteDialect
+
+
+frontend:
+  url: http://localhost:3000

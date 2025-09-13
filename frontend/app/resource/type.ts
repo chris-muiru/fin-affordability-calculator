@@ -1,13 +1,11 @@
 import z from "zod"
-
 export const LoanRequestSchema = z.object({
-	grossIncome: z
+	grossIncome: z.coerce
 		.number()
-		.refine((value) => typeof value === "number", {
-			message: "Gross income must be a number",
-		})
 		.min(1, { message: "Gross income must be greater than 0" }),
-	deductions: z.number().min(0, { message: "Deductions must be 0 or greater" }),
+	deductions: z.coerce
+		.number()
+		.min(0, { message: "Deductions must be 0 or greater" }),
 })
 
 export const LoanReponseSchema = z

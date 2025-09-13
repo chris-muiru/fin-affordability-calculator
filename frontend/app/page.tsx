@@ -23,6 +23,7 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { toast } from "sonner"
 import { formatCurrency } from "@/app/util"
+import { sleep } from "@/lib/utils"
 
 interface CalculationResult {
 	net_income: number
@@ -49,6 +50,7 @@ export default function AffordabilityCalculator() {
 	const handleLoanCalculation = async (data: TLoanRequest) => {
 		try {
 			setLoading(true)
+			// await sleep(3000) // simulate network delay because the API is too fast
 			const result: TLoanResponse = await loanCalculatorMutation.mutateAsync(
 				data
 			)
@@ -229,9 +231,23 @@ export default function AffordabilityCalculator() {
 								</div>
 							</div>
 
-							{result.eligible && (
-								<div className="bg-[#00A859]/5 border border-[#00A859]/20 p-4 rounded-lg">
-									<p className="text-[#00A859] font-medium mb-2">Next Steps:</p>
+							{result && (
+								<div
+									className={
+										result.eligible
+											? "bg-[#00A859]/5 border border-[#00A859]/20 p-4 rounded-lg"
+											: "bg-red-500/5 border border-red-500/20 p-4 rounded-lg"
+									}
+								>
+									<p
+										className={
+											result.eligible
+												? "text-[#00A859] font-medium mb-2"
+												: "text-red-300 font-medium mb-2"
+										}
+									>
+										Next Steps:
+									</p>
 
 									<ul className="text-slate-700 text-sm space-y-1">
 										{result.nextStep.map((step, index) => (
