@@ -1,66 +1,112 @@
 pipeline {
     agent any
 
-    // Add the environment block to include Bun in the PATH
+    // Include Bun in PATH for all stages
     environment {
         PATH = "/var/lib/jenkins/.bun/bin:$PATH"
     }
 
     stages {
 
-        // Verify that Bun is installed and available
-        stage('Verify Bun,Java installation) {
+        // -------------------------------
+        // Stage 1: Verify Bun & Java
+        // -------------------------------
+        stage('Verify Tools') {
             steps {
-                sh 'which bun'        // Check Bun's location
-                sh 'bun --version'    // Display Bun version
+                sh 'which bun'        // Confirm Bun is installed
+                sh 'bun --version'    // Check Bun version
+                sh 'java -version'    // Confirm Java installation
             }
         }
 
-        // Checkout your code from GitHub
-        stage('Checkout') {
+        // -------------------------------
+        // Stage 2: Checkout Code
+        // -------------------------------
+        stage('Checkout Code') {
             steps {
-                // Use your GitHub credentials stored in Jenkins
-                withCredentials([usernamePassword(credentialsId: 'muiru-secret', usernameVariable: 'GITHUB_USERNAME', passwordVariable: 'GITHUB_TOKEN')]) {
-                    git url: "https://${GITHUB_USERNAME}:${GITHUB_TOKEN}@github.com/chris-muiru/new-ui-muiru-ecomm.git", branch: 'main'
+                // Using Git credentials stored in Jenkins
+                withCredentials([usernamePassword(credentialsId: 'muiru-secret', 
+                                                 usernameVariable: 'GITHUB_USERNAME', 
+                                                 passwordVariable: 'GITHUB_TOKEN')]) {
+                    git url: "https://${GITHUB_USERNAME}:${GITHUB_TOKEN}@github.com/chris-muiru/new-ui-muiru-ecomm.git", 
+                        branch: 'main'
                 }
             }
         }
 
-        // Install dependencies using Bun
-        stage('Install Dependencies') {
+        // -------------------------------
+        // Stage 3: Frontend - Install Dependencies
+        // -------------------------------
+        stage('Frontend - Install Dependencies') {
             steps {
-                sh 'bun install'    
+                dir('frontend') {       // Switch to frontend folder
+                    sh 'bun install'
+                }
             }
         }
 
-        // Build the Next.js project using Bun
-        stage('Build') {
+        // -------------------------------
+        // Stage 4: Frontend - Build
+        // -------------------------------
+        stage('Frontend - Build') {
             steps {
-                sh 'bun run build'   
+                dir('frontend') {
+                    sh 'bun run build'
+                }
             }
         }
 
-        // start application
-        stage('start application'){
-           steps {
-                script {
+        // -------------------------------
+        // Stage 5: Frontend - Deploy with PM2
+        // -------------------------------
+        stage('Frontend - Deploy') {
+            steps {
+                dir('frontend') {
                     sh '''
-                        pm2 stop fin-calculator || true  # Stop the application if it's running
-                        pm2 start ecosystem.config.js || true  # Start the app
-                        pm2 save  # Save the process list to PM2
-                        '''
+                        pm2 stop fin-calculator || true    # Stop if running
+                        pm2 start ecosystem.config.js      # Start app with PM2
+                        pm2 save                           # Save PM2 process list
+                    '''
+                }
+            }
+        }
+
+        // -------------------------------
+        // Stage 6: Backend - Build Jar
+        // -------------------------------
+        stage('Backend - Build') {
+            steps {
+                dir('backend') {                  // Switch to backend folder
+                    sh './mvnw clean package -DskipTests'  // Build Spring Boot jar
+                }
+            }
+        }
+
+        // -------------------------------
+        // Stage 7: Backend - Run Jar
+        // -------------------------------
+        stage('Backend - Deploy') {
+            steps {
+                dir('backend') {
+                    sh '''
+                        # Stop any existing app (optional, you can use systemd if preferred)
+                        pkill -f "java -jar backend.jar" || true
+                        java -jar target/backend.jar &    # Run in background
+                    '''
                 }
             }
         }
     }
 
+    // -------------------------------
     // Post-build actions
+    // -------------------------------
     post {
         success {
-            echo 'Pipeline succeeded!'
+            echo 'Pipeline completed successfully!'
         }
         failure {
-            echo 'Pipeline failed.'
+            echo 'Pipeline failed!'
         }
     }
 }
