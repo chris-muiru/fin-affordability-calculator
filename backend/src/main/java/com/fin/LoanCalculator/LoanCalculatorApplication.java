@@ -28,9 +28,9 @@ public class LoanCalculatorApplication {
                                 .eligible(true)
                                 .message("Congratulations! You qualify for a loan with Fin Africa")
                                 .nextSteps(List.of(
-                                        "Contact our loan officers to start your application",
                                         "Prepare your income documentation",
-                                        "Choose your preferred loan terms"
+                                        "Choose your preferred loan terms",
+                                        "Contact our loan officers to start your application (+254758662445)"
                                 ))
                                 .build()
 
