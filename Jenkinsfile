@@ -8,9 +8,7 @@ pipeline {
 
     stages {
 
-        // -------------------------------
-        // Stage 1: Verify Bun & Java
-        // -------------------------------
+        // Verify Bun & Java
         stage('Verify Tools') {
             steps {
                 sh 'which bun'        // Confirm Bun is installed
@@ -19,9 +17,7 @@ pipeline {
             }
         }
 
-        // -------------------------------
-        // Stage 2: Checkout Code
-        // -------------------------------
+        Checkout Code
         stage('Checkout Code') {
             steps {
                 // Using Git credentials stored in Jenkins
@@ -34,9 +30,7 @@ pipeline {
             }
         }
 
-        // -------------------------------
-        // Stage 3: Frontend - Install Dependencies
-        // -------------------------------
+        // Frontend - Install Dependencies
         stage('Frontend - Install Dependencies') {
             steps {
                 dir('frontend') {       // Switch to frontend folder
@@ -45,9 +39,7 @@ pipeline {
             }
         }
 
-        // -------------------------------
-        // Stage 4: Frontend - Build
-        // -------------------------------
+        // Frontend - Build
         stage('Frontend - Build') {
             steps {
                 dir('frontend') {
@@ -56,9 +48,7 @@ pipeline {
             }
         }
 
-        // -------------------------------
-        // Stage 5: Frontend - Deploy with PM2
-        // -------------------------------
+        // Frontend - Deploy with PM2
         stage('Frontend - Deploy') {
             steps {
                 dir('frontend') {
@@ -71,9 +61,7 @@ pipeline {
             }
         }
 
-        // -------------------------------
-        // Stage 6: Backend - Build Jar
-        // -------------------------------
+        // Backend - Build Jar
         stage('Backend - Build') {
             steps {
                 dir('backend') { 
@@ -84,16 +72,29 @@ pipeline {
             }
         }
 
-        // -------------------------------
-        // Stage 7: Backend - Run Jar
-        // -------------------------------
+        //  setup SQLite database
+         stage('Setup SQLite DB') {
+            steps {
+                sh '''
+                    mkdir -p db
+                    
+                    DB_FILE="db/finLoanCalculator.db"
+                    if [ ! -f "$DB_FILE" ]; then
+                        sqlite3 "$DB_FILE" "VACUUM;"
+                    fi
+
+                    chmod 666 "$DB_FILE"
+                '''
+            }
+        }
+
         stage('Backend - Deploy') {
             steps {
                 dir('backend') {
                     sh '''
-                        # Stop any existing app (optional, you can use systemd if preferred)
-                        pkill -f "java -jar backend.jar" || true
-                        java -jar target/backend.jar &    # Run in background
+                        # Stop any existing application
+                        pkill -f "java -jar LoanCalculator-1.0.0-SNAPSHOT.jar" || true
+                        java -jar target/LoanCalculator-1.0.0-SNAPSHOT.jar &    # Run in background
                     '''
                 }
             }
