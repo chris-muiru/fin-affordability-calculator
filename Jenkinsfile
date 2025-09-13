@@ -77,13 +77,8 @@ pipeline {
             steps {
                 sh '''
                     mkdir -p db
-                    
-                    DB_FILE="db/finLoanCalculator.db"
-                    if [ ! -f "$DB_FILE" ]; then
-                        sqlite3 "$DB_FILE" "VACUUM;"
-                    fi
-
-                    chmod 666 "$DB_FILE"
+                    touch db/finLoanCalculator.db
+                    chmod 666 db/finLoanCalculator.db
                 '''
             }
         }
