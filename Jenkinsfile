@@ -87,18 +87,16 @@ pipeline {
             steps {
                 dir('backend') {
                     sh '''
-                        # Stop any existing application
-                        pkill -f "java -jar LoanCalculator-1.0.0-SNAPSHOT.jar" || true
-                        java -jar target/LoanCalculator-1.0.0-SNAPSHOT.jar &    # Run in background
+                        pm2 stop fin-backend || true    # Stop if running
+                        pm2 start ecosystem.config.js      # Start app with PM2
+                        pm2 save                           # Save PM2 process list
                     '''
                 }
             }
         }
     }
 
-    // -------------------------------
     // Post-build actions
-    // -------------------------------
     post {
         success {
             echo 'Pipeline completed successfully!'
