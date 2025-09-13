@@ -4,6 +4,7 @@ import { GeistSans } from "geist/font/sans"
 import { GeistMono } from "geist/font/mono"
 import { Suspense } from "react"
 import "./globals.css"
+import ParentProvider from "@/app/provider/parent-provider"
 
 export const metadata: Metadata = {
 	title: "Affordability Calculator - Fin Africa",
@@ -19,7 +20,9 @@ export default function RootLayout({
 	return (
 		<html lang="en">
 			<body className={`font-sans ${GeistSans.variable} ${GeistMono.variable}`}>
-				<Suspense fallback={null}>{children}</Suspense>
+				<ParentProvider>
+					<Suspense fallback={null}>{children}</Suspense>
+				</ParentProvider>
 			</body>
 		</html>
 	)

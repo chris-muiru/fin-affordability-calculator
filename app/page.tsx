@@ -13,6 +13,16 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { CheckCircle, XCircle, Loader2, Calculator } from "lucide-react"
+import { useLoanCalculatorMutation } from "@/app/resource/hook"
+import {
+	LoanRequestSchema,
+	TLoanRequest,
+	TLoanResponse,
+} from "@/app/resource/type"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { toast } from "sonner"
+import { formatCurrency } from "@/app/util"
 
 interface CalculationResult {
 	net_income: number
@@ -22,71 +32,35 @@ interface CalculationResult {
 }
 
 export default function AffordabilityCalculator() {
-	const [grossIncome, setGrossIncome] = useState("")
-	const [deductions, setDeductions] = useState("")
-	const [result, setResult] = useState<CalculationResult | null>(null)
+	// mutation functions
+	const loanCalculatorMutation = useLoanCalculatorMutation()
+
+	const {
+		register,
+		handleSubmit,
+		reset,
+		formState: { errors },
+	} = useForm<TLoanRequest>({
+		resolver: zodResolver(LoanRequestSchema),
+	})
+
+	const [result, setResult] = useState<TLoanResponse | null>(null)
 	const [loading, setLoading] = useState(false)
-	const [errors, setErrors] = useState<{
-		grossIncome?: string
-		deductions?: string
-	}>({})
-
-	const validateInputs = () => {
-		const newErrors: { grossIncome?: string; deductions?: string } = {}
-
-		if (!grossIncome || isNaN(Number(grossIncome)) || Number(grossIncome) < 0) {
-			newErrors.grossIncome = "Please enter a valid gross income (≥ 0)"
-		}
-
-		if (!deductions || isNaN(Number(deductions)) || Number(deductions) < 0) {
-			newErrors.deductions = "Please enter valid deductions (≥ 0)"
-		}
-
-		setErrors(newErrors)
-		return Object.keys(newErrors).length === 0
-	}
-
-	const handleSubmit = async (e: React.FormEvent) => {
-		e.preventDefault()
-
-		if (!validateInputs()) return
-
-		setLoading(true)
-
+	const handleLoanCalculation = async (data: TLoanRequest) => {
 		try {
-			// Simulate API call - todo: replace with actual backend endpoint
-			await new Promise((resolve) => setTimeout(resolve, 1500))
-
-			const gross = Number(grossIncome)
-			const totalDeductions = Number(deductions)
-			const netIncome = gross - totalDeductions
-			const maxLoan = netIncome * 0.5
-			const eligible = maxLoan >= 20000
-
-			const calculationResult: CalculationResult = {
-				net_income: netIncome,
-				max_loan: maxLoan,
-				eligible,
-				message: eligible
-					? "Congratulations! You qualify for a loan with Fin Africa."
-					: "Unfortunately, your current income doesn't meet our minimum loan requirements.",
-			}
-
-			setResult(calculationResult)
-		} catch (error) {
-			console.error("Calculation error:", error)
+			setLoading(true)
+			const result: TLoanResponse = await loanCalculatorMutation.mutateAsync(
+				data
+			)
+			setResult(result)
+		} catch (e) {
+			console.error("Error occurred during loan calculation:", e)
+			toast.error("Error", {
+				description: "An Error occurred while calculating loan eligibility:",
+			})
 		} finally {
 			setLoading(false)
 		}
-	}
-
-	const formatCurrency = (amount: number) => {
-		return new Intl.NumberFormat("en-KE", {
-			style: "currency",
-			currency: "KES",
-			minimumFractionDigits: 0,
-			maximumFractionDigits: 0,
-		}).format(amount)
 	}
 
 	return (
@@ -118,7 +92,10 @@ export default function AffordabilityCalculator() {
 						</CardDescription>
 					</CardHeader>
 					<CardContent className="p-6 bg-white rounded-b-lg">
-						<form onSubmit={handleSubmit} className="space-y-6">
+						<form
+							onSubmit={handleSubmit(handleLoanCalculation)}
+							className="space-y-6"
+						>
 							<div className="space-y-2">
 								<Label
 									htmlFor="grossIncome"
@@ -130,15 +107,16 @@ export default function AffordabilityCalculator() {
 									id="grossIncome"
 									type="number"
 									placeholder="e.g., 80,000"
-									value={grossIncome}
-									onChange={(e) => setGrossIncome(e.target.value)}
 									className={`h-12 text-lg ${
 										errors.grossIncome ? "border-red-500" : "border-slate-300"
 									}`}
 									disabled={loading}
+									{...register("grossIncome")}
 								/>
 								{errors.grossIncome && (
-									<p className="text-red-500 text-sm">{errors.grossIncome}</p>
+									<p className="text-red-500 text-sm">
+										{errors.grossIncome.message}
+									</p>
 								)}
 							</div>
 
@@ -153,15 +131,16 @@ export default function AffordabilityCalculator() {
 									id="deductions"
 									type="number"
 									placeholder="e.g., 25,000"
-									value={deductions}
-									onChange={(e) => setDeductions(e.target.value)}
 									className={`h-12 text-lg ${
 										errors.deductions ? "border-red-500" : "border-slate-300"
 									}`}
+									{...register("deductions")}
 									disabled={loading}
 								/>
 								{errors.deductions && (
-									<p className="text-red-500 text-sm">{errors.deductions}</p>
+									<p className="text-red-500 text-sm">
+										{errors.deductions.message}
+									</p>
 								)}
 								<p className="text-slate-500 text-sm">
 									Include taxes, insurance, existing loans, and other monthly
@@ -224,7 +203,7 @@ export default function AffordabilityCalculator() {
 										Net Monthly Income
 									</p>
 									<p className="text-2xl font-bold text-slate-800">
-										{formatCurrency(result.net_income)}
+										{formatCurrency(result.netIncome)}
 									</p>
 								</div>
 								<div className="bg-slate-50 p-4 rounded-lg">
@@ -236,7 +215,7 @@ export default function AffordabilityCalculator() {
 											result.eligible ? "text-[#00A859]" : "text-red-600"
 										}`}
 									>
-										{formatCurrency(result.max_loan)}
+										{formatCurrency(result.maxLoan)}
 									</p>
 								</div>
 								<div className="bg-slate-50 p-4 rounded-lg">
@@ -253,12 +232,11 @@ export default function AffordabilityCalculator() {
 							{result.eligible && (
 								<div className="bg-[#00A859]/5 border border-[#00A859]/20 p-4 rounded-lg">
 									<p className="text-[#00A859] font-medium mb-2">Next Steps:</p>
+
 									<ul className="text-slate-700 text-sm space-y-1">
-										<li>
-											• Contact our loan officers to start your application
-										</li>
-										<li>• Prepare your income documentation</li>
-										<li>• Choose your preferred loan terms</li>
+										{result.nextStep.map((step, index) => (
+											<li key={`${step}-${index}`}>{step}</li>
+										))}
 									</ul>
 								</div>
 							)}
