@@ -3,7 +3,8 @@ pipeline {
 
     // Include Bun in PATH for all stages
     environment {
-        PATH = "/var/lib/jenkins/.bun/bin:$PATH"
+        JAVA_HOME = "/var/lib/jenkins/.sdkman/candidates/java/24.0.2-amzn"
+        PATH = "/var/lib/jenkins/.bun/bin:${JAVA_HOME}/bin:${env.PATH}"
     }
 
     stages {
