@@ -113,6 +113,7 @@ export default function AffordabilityCalculator() {
 										errors.grossIncome ? "border-red-500" : "border-slate-300"
 									}`}
 									disabled={loading}
+									required={true}
 									{...register("grossIncome")}
 								/>
 								{errors.grossIncome && (
@@ -137,6 +138,7 @@ export default function AffordabilityCalculator() {
 										errors.deductions ? "border-red-500" : "border-slate-300"
 									}`}
 									{...register("deductions")}
+									required={true}
 									disabled={loading}
 								/>
 								{errors.deductions && (
