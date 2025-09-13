@@ -1,4 +1,9 @@
 # Fin Africa Affordability Calculator
+<img width="1430" height="1147" alt="image" src="https://github.com/user-attachments/assets/13184e32-ddad-4e52-b95a-9d02a0290599" />
+<img width="1064" height="1003" alt="image" src="https://github.com/user-attachments/assets/966857a0-eb5e-44a8-b925-f53037536a55" />
+
+
+
 
 A modern, responsive loan affordability calculator built with Next.js 15, TypeScript, and Tailwind CSS. This application helps users determine their loan eligibility based on their income and monthly deductions, following Fin Africa's design system.
 
