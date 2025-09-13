@@ -17,7 +17,7 @@ pipeline {
             }
         }
 
-        Checkout Code
+        // Checkout Code
         stage('Checkout Code') {
             steps {
                 // Using Git credentials stored in Jenkins
