@@ -28,7 +28,7 @@ pipeline {
                 withCredentials([usernamePassword(credentialsId: 'muiru-secret', 
                                                  usernameVariable: 'GITHUB_USERNAME', 
                                                  passwordVariable: 'GITHUB_TOKEN')]) {
-                    git url: "https://${GITHUB_USERNAME}:${GITHUB_TOKEN}@github.com/chris-muiru/new-ui-muiru-ecomm.git", 
+                    git url: "https://${GITHUB_USERNAME}:${GITHUB_TOKEN}@github.com/chris-muiru/fin-affordability-calculator.git", 
                         branch: 'main'
                 }
             }
