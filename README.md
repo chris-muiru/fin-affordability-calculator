@@ -4,6 +4,11 @@ A clean, responsive loan affordability calculator that helps users determine loa
 
 **Live Demo:** https://fin.awesome.co.ke
 
+<img width="1095" height="881" alt="image" src="https://github.com/user-attachments/assets/41962615-271e-49d1-be5d-fa8f50368af2" />
+<img width="745" height="889" alt="image" src="https://github.com/user-attachments/assets/2059249f-170c-47d4-8310-b25716f6e3ce" />
+
+
+
 
 ### Features
 
