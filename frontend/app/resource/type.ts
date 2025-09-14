@@ -23,7 +23,10 @@ export const LoanRequestSchema = z.object({
 				message: "Deductions cannot be empty and must be a valid number",
 			}
 		)
-		.transform((val) => Number(val)),
+		.transform((val) => Number(val))
+		.refine((val) => val > -1, {
+			message: "Deductions must be greater or equal to 0",
+		}),
 })
 
 export const LoanReponseSchema = z
