@@ -1,149 +1,113 @@
 # Fin Africa Affordability Calculator
-<img width="1430" height="1147" alt="image" src="https://github.com/user-attachments/assets/13184e32-ddad-4e52-b95a-9d02a0290599" />
-<img width="1064" height="1003" alt="image" src="https://github.com/user-attachments/assets/966857a0-eb5e-44a8-b925-f53037536a55" />
+
+A clean, responsive loan affordability calculator that helps users determine loan eligibility based on their income and deductions.
+
+**Live Demo:** https://fin.awesome.co.ke
 
 
+### Features
 
+- **Real-time calculations** - Instant loan eligibility computation
+- **Responsive design** - Works on mobile, tablet, and desktop
+- **Clean UI** - Simple, accessible interface
+- **Input validation** - Comprehensive error handling
+- **Currency formatting** - Proper currency formatting
 
-A modern, responsive loan affordability calculator built with Next.js 15, TypeScript, and Tailwind CSS. This application helps users determine their loan eligibility based on their income and monthly deductions, following Fin Africa's design system.
+### Tech Stack
 
-## Features
+- **Frontend:** Next.js + Tailwind CSS
+- **Backend:** Spring Boot + SQLite
+- **Infrastructure:** Nginx + Contabo VPS
+- **CI/CD:** Jenkins automated deployment
 
-- **Real-time Calculation**: Instantly calculates loan eligibility based on user input
-- **Form Validation**: Comprehensive input validation with error handling
-- **Responsive Design**: Optimized for desktop, tablet, and mobile devices
-- **Loading States**: Smooth loading animations during calculations
-- **Currency Formatting**: Proper Kenyan Shilling (KES) formatting
-- **Accessibility**: WCAG compliant with proper ARIA labels and keyboard navigation
-- **Modern UI**: Clean, professional design matching Fin Africa's brand
+### Architecture
 
-## Tech Stack
-
-- **Framework**: Next.js 15 (App Router)
-- **Language**: TypeScript
-- **Styling**: Tailwind CSS v4
-- **UI Components**: shadcn/ui
-- **Icons**: Lucide React
-- **Fonts**: Geist Sans & Geist Mono
-- **Analytics**: Vercel Analytics
-
-## Getting Started
-
-### Prerequisites
-- Bun 1.2.5 or later
-
-
-### Installation
-
-1. **Clone or download the project**
-```
-   # If using GitHub
-   git clone https://github.com/chris-muiru/fin-affordability-calculator
-   cd fin-affordability-calculator
-   
-   # Or download and extract the ZIP file
+```mermaid
+flowchart TD
+    A[User] --> B[Next.js Frontend]
+    B --> C[Nginx Proxy]
+    C --> D[Spring Boot API]
+    D --> E[SQLite Database]
+    
+    F[GitHub] --> G[Jenkins CI/CD]
+    G --> H[VPS Server]
+    H --> C
 ```
 
-2. **Install dependencies**
-```
-   bun install
-```
+### Getting Started
 
-3. **Run the development server**
-```
-   bun run dev
-```
+#### Prerequisites
+- Bun 1.2.5
+- Java 24.0.2
+- Maven 3.9.11
 
-4. **Open your browser**
-   Navigate to [http://localhost:3000](http://localhost:3000) to see the application.
-
-### Building for Production
-
-```
-# Build the application
-bun run build
-
-# Start the production server
-bun run start
+#### Setup
+**Clone the repository**
+```bash
+git clone git@github.com:chris-muiru/fin-affordability-calculator.git
+cd fin-affordability-calculator
 ```
 
-## Project Structure
-
+**Run the frontend**
+```bash
+cd frontend
+bun install
+bun run dev
 ```
-├── app/
-│   ├── globals.css          # Global styles and Tailwind configuration
-│   ├── layout.tsx           # Root layout with fonts and metadata
-│   └── page.tsx             # Main affordability calculator page
-├── components/
-│   ├── ui/                  # shadcn/ui components (Button, Card, Input, Label)
-├── lib/
-│   └── utils.ts             # Utility functions (cn for class merging)
-├── next.config.mjs          # Next.js configuration
-├── package.json             # Dependencies and scripts
-├── tsconfig.json            # TypeScript configuration
-└── README.md                # This file
+Frontend available at: `http://localhost:3000`
+
+**Run the backend**
+```bash
+cd backend
+mvn spring-boot:run
+```
+API available at: `http://localhost:8080`
+
+### How It Works
+
+#### Calculation Logic
+```javascript
+const netIncome = grossIncome - totalDeductions;
+const maxLoan = netIncome * 0.5; // 50% of net income
+const isEligible = maxLoan >= 20000; // Minimum KES 20,000
 ```
 
-## Usage
+### API Example
+```json
+Request:
 
-### Basic Calculation
+POST /api/v1/loan
+{
+    "grossIncome": 100000,
+    "deductions": 30000
+}
 
-1. Enter your **Gross Monthly Income** in KES
-2. Enter your **Total Monthly Deductions** (taxes, insurance, existing loans, etc.)
-3. Click **"Calculate My Loan Eligibility"**
-4. View your results including:
-   - Net monthly income
-   - Maximum loan amount (50% of net income)
-   - Eligibility status
-   - Next steps (if eligible)
+Response:
+{
+    "netIncome": 70000.0,
+    "maxLoan": 35000.0,
+    "eligible": true,
+    "message": "Congratulations! You qualify for a loan with Fin Africa",
+    "nextStep": [
+        "Prepare your income documentation",
+        "Choose your preferred loan terms",
+        "Contact our loan officers to start your application (+254758662445)"
+    ]
+}
+```
+### Deployment
 
-### Loan Eligibility Criteria
+- **Hosting:** Contabo VPS with Nginx reverse proxy
+- **CI/CD:** Automated Jenkins pipeline
+- **SSL:** Let's Encrypt certificates
 
-- **Minimum loan amount**: KES 20,000
-- **Maximum loan calculation**: 50% of net monthly income
-- **Net income**: Gross income minus total deductions
+### License
 
-## Customization
-
-### Styling
-
-The application uses Fin Africa's brand colors:
-- **Primary Green**: `#00A859`
-- **Hover Green**: `#008A4A`
-- **Text Colors**: Slate variants for professional appearance
-
-### API Integration
-
-### Form Validation
-
-## Deployment
-
-## Browser Support
-
-- Chrome 90+
-- Firefox 88+
-- Safari 14+
-- Edge 90+
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## Support
-
-For support or questions about this calculator:
-- Create an issue in the repository
-- Contact the development team
-- Check the documentation for common solutions
+MIT License
 
 ---
 
-Built with ❤️ for Fin Africa
+**Built by Chris Muiru**  
+Full-Stack Developer
+
+[Live Demo](https://fin.awesome.co.ke) • [GitHub](https://github.com/chris-muiru)

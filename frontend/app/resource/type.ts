@@ -1,11 +1,29 @@
-import z from "zod"
+import { z } from "zod"
+
 export const LoanRequestSchema = z.object({
-	grossIncome: z.coerce
-		.number()
-		.min(1, { message: "Gross income must be greater than 0" }),
-	deductions: z.coerce
-		.number()
-		.min(0, { message: "Deductions must be 0 or greater" }),
+	grossIncome: z
+		.preprocess((val) => val, z.any())
+		.refine(
+			(val) =>
+				!isNaN(Number(val)) && val !== "" && val !== null && val !== undefined,
+			{
+				message: "Gross income cannot be empty and must be a valid number",
+			}
+		)
+		.transform((val) => Number(val)) // convert to number after validation
+		.refine((val) => val > 0, {
+			message: "Gross income must be greater than 0",
+		}),
+	deductions: z
+		.preprocess((val) => val, z.any())
+		.refine(
+			(val) =>
+				!isNaN(Number(val)) && val !== "" && val !== null && val !== undefined,
+			{
+				message: "Deductions cannot be empty and must be a valid number",
+			}
+		)
+		.transform((val) => Number(val)),
 })
 
 export const LoanReponseSchema = z

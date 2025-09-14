@@ -1,13 +1,14 @@
 package com.fin.LoanCalculator;
 
-import com.fin.LoanCalculator.logic.io.entity.LoanEligibilityEntity;
-import com.fin.LoanCalculator.logic.io.repo.LoanEligibilityRepo;
+import java.util.List;
+
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
-import java.util.List;
+import com.fin.LoanCalculator.logic.io.entity.LoanEligibilityEntity;
+import com.fin.LoanCalculator.logic.io.repo.LoanEligibilityRepo;
 
 @SpringBootApplication
 public class LoanCalculatorApplication {
@@ -48,7 +49,6 @@ public class LoanCalculatorApplication {
                                         "Reapply after 3–6 months once financial situation improves"
                                 ))
                                 .build()
-
                 );
 
             }

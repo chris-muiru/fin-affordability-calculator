@@ -39,10 +39,10 @@ export default function AffordabilityCalculator() {
 	const {
 		register,
 		handleSubmit,
-		reset,
 		formState: { errors },
-	} = useForm<TLoanRequest>({
+	} = useForm({
 		resolver: zodResolver(LoanRequestSchema),
+		mode: "onChange",
 	})
 
 	const [result, setResult] = useState<TLoanResponse | null>(null)
@@ -113,8 +113,14 @@ export default function AffordabilityCalculator() {
 										errors.grossIncome ? "border-red-500" : "border-slate-300"
 									}`}
 									disabled={loading}
-									required={true}
 									{...register("grossIncome")}
+									// prevent scientific notation and +/-
+									onKeyDown={(e) => {
+										if (["e", "E", "+", "-"].includes(e.key)) {
+											e.preventDefault()
+										}
+									}}
+									onPaste={(e) => e.preventDefault()}
 								/>
 								{errors.grossIncome && (
 									<p className="text-red-500 text-sm">
@@ -138,7 +144,13 @@ export default function AffordabilityCalculator() {
 										errors.deductions ? "border-red-500" : "border-slate-300"
 									}`}
 									{...register("deductions")}
-									required={true}
+									// prevent scientific notation and +/-
+									onKeyDown={(e) => {
+										if (["e", "E", "+", "-"].includes(e.key)) {
+											e.preventDefault()
+										}
+									}}
+									onPaste={(e) => e.preventDefault()}
 									disabled={loading}
 								/>
 								{errors.deductions && (
