@@ -1,14 +1,13 @@
 package com.fin.LoanCalculator;
 
-import java.util.List;
-
+import com.fin.LoanCalculator.logic.io.entity.LoanEligibilityEntity;
+import com.fin.LoanCalculator.logic.io.repo.LoanEligibilityRepo;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
-import com.fin.LoanCalculator.logic.io.entity.LoanEligibilityEntity;
-import com.fin.LoanCalculator.logic.io.repo.LoanEligibilityRepo;
+import java.util.List;
 
 @SpringBootApplication
 public class LoanCalculatorApplication {
@@ -20,7 +19,7 @@ public class LoanCalculatorApplication {
 
     @Bean
     CommandLineRunner seedDatabase(LoanEligibilityRepo repo) {
-        return _ -> {
+        return args -> {
             if (repo.count() == 0) {
 
                 // Eligible next steps
