@@ -2,15 +2,16 @@ import { z } from "zod"
 
 export const LoanRequestSchema = z.object({
 	grossIncome: z
-		.preprocess((val) => val, z.any())
+		.preprocess((val) => val, z.any()) // after pre-processing,accpet any type
 		.refine(
+			// custom validator
 			(val) =>
 				!isNaN(Number(val)) && val !== "" && val !== null && val !== undefined,
 			{
 				message: "Gross income cannot be empty and must be a valid number",
 			}
 		)
-		.transform((val) => Number(val)) // convert to number after validation
+		.transform((val) => Number(val))
 		.refine((val) => val > 0, {
 			message: "Gross income must be greater than 0",
 		}),
@@ -38,7 +39,7 @@ export const LoanReponseSchema = z
 		nextStep: z.array(z.string()).min(1),
 	})
 	.strict()
-
+ // convert to number after validation
 // TS type
 export type TLoanRequest = z.infer<typeof LoanRequestSchema>
 export type TLoanResponse = z.infer<typeof LoanReponseSchema>

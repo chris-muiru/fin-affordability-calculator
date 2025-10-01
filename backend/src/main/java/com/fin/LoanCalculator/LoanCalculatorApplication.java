@@ -19,7 +19,7 @@ public class LoanCalculatorApplication {
 
     @Bean
     CommandLineRunner seedDatabase(LoanEligibilityRepo repo) {
-        return args -> {
+        return _ -> {
             if (repo.count() == 0) {
 
                 // Eligible next steps

@@ -23,14 +23,6 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { toast } from "sonner"
 import { formatCurrency } from "@/app/util"
-import { sleep } from "@/lib/utils"
-
-interface CalculationResult {
-	net_income: number
-	max_loan: number
-	eligible: boolean
-	message: string
-}
 
 export default function AffordabilityCalculator() {
 	// mutation functions
@@ -50,7 +42,6 @@ export default function AffordabilityCalculator() {
 	const handleLoanCalculation = async (data: TLoanRequest) => {
 		try {
 			setLoading(true)
-			// await sleep(3000) // simulate network delay because the API is too fast
 			const result: TLoanResponse = await loanCalculatorMutation.mutateAsync(
 				data
 			)
@@ -167,7 +158,7 @@ export default function AffordabilityCalculator() {
 							<Button
 								type="submit"
 								disabled={loading}
-								className="w-full h-12 bg-[#00A859] hover:bg-[#008A4A] text-white font-semibold text-lg rounded-lg transition-colors duration-200"
+								className="w-full h-12 transition-colors duration-200 bg-[#00A859] hover:bg-[#008A4A] text-white font-semibold text-lg rounded-lg "
 							>
 								{loading ? (
 									<>
